@@ -674,6 +674,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     mEditModeButton = (ImageView) mSettingsPanel.findViewById(R.id.edit_mode_button);
 
                     // Quicksettings date/time
+                    View qsDateTimeView = mSettingsPanel.findViewById(R.id.datetime);
+                    if (qsDateTimeView != null) {
+                        qsDateTimeView.setOnClickListener(mClockClickListener);
+                        qsDateTimeView.setEnabled(true);
                     View qsClockView = mSettingsPanel.findViewById(R.id.clock);
                     if (qsClockView != null) {
                         qsClockView.setOnClickListener(mClockClickListener);
