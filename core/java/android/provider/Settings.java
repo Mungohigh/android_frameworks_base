@@ -2262,6 +2262,12 @@ public final class Settings {
         public static final String TTY_MODE = "tty_mode";
 
         /**
+         * Whether national data roaming should be used.
+         * @hide
+         */
+        public static final String MVNO_ROAMING = "mvno_roaming";
+
+        /**
          * Whether the sounds effects (key clicks, lid open ...) are enabled. The value is
          * boolean (1 or 0).
          */
@@ -2540,6 +2546,12 @@ public final class Settings {
         public static final String IMMERSIVE_MODE = "immersive_mode";
 
         /**
+         * Store last immersive state to persist through reboot
+         * @hide
+         */
+        public static final String IMMERSIVE_LAST_ACTIVE_STATE = "immersive_last_active_state";
+
+        /**
          * Quick settings tiles to show on status bar
          * @hide
          */
@@ -2558,6 +2570,12 @@ public final class Settings {
         public static final String QUICK_SETTINGS_QUICK_PULL_DOWN = "quick_settings_quick_pull_down";
 
         /**
+         * Safe headset volume warning option
+         * @hide
+         */
+        public static final String SAFE_HEADSET_VOLUME = "safe_headset_volume";
+
+        /**
          * Setting to show determine if AOSP dialer is used
          * @hide
          */
@@ -2568,7 +2586,6 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_MAXIMIZE_WIDGETS = "lockscreen_maximize_widgets";
-
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -2645,7 +2662,8 @@ public final class Settings {
          * @hide
          */
         public static final String[] SETTINGS_TO_RESET = {
-            QUICK_SETTINGS_QUICK_PULL_DOWN
+            QUICK_SETTINGS_QUICK_PULL_DOWN,
+            SAFE_HEADSET_VOLUME
         };
 
         // Settings moved to Settings.Secure
