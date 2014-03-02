@@ -112,7 +112,8 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
+public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
+        NetworkController.UpdateUIListener {
     static final String TAG = "PhoneStatusBar";
     public static final boolean DEBUG = BaseStatusBar.DEBUG;
     public static final boolean SPEW = false;
@@ -221,7 +222,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     View mDateTimeView;
     View mClearButton;
     ImageView mSettingsButton, mNotificationButton, mEditModeButton;
-    boolean mAnimatingEditModeButton;
 
     // carrier/wifi label
     private TextView mCarrierLabel;
@@ -742,6 +742,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
         mBattery = (BatteryMeterView) mStatusBarView.findViewById(R.id.battery);
         mCircleBattery = (BatteryCircleMeterView) mStatusBarView.findViewById(R.id.circle_battery);
+        mNetworkController.setListener(this);
 
         return mStatusBarView;
     }
@@ -1205,6 +1206,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 mNotificationIcons.addView(v, i, params);
             }
         }
+    }
+
+    /**
+     * Listen for UI updates and refresh layout.
+     */
+    public void onUpdateUI() {
+        updateCarrierLabelVisibility(true);
     }
 
     protected void updateCarrierLabelVisibility(boolean force) {
@@ -2545,15 +2553,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     private View.OnClickListener mEditModeButtonListener = new View.OnClickListener() {
         public void onClick(View v) {
             final boolean enabled = mSettingsContainer.isEditModeEnabled();
-            if(mAnimatingEditModeButton) return;
-            mAnimatingEditModeButton = true;
-            mEditModeButton.animate().rotationYBy(180)
-                    .setListener(new AnimatorListenerAdapter() {
-                        public void onAnimationEnd(Animator animation) {
-                            mSettingsContainer.setEditModeEnabled(!enabled);
-                            mAnimatingEditModeButton = false;
-                        }
-                });
+            mSettingsContainer.setEditModeEnabled(!enabled);
         }
     };
 

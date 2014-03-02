@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
- * Copyright (c) 2010-2013, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2010-2014, The Linux Foundation. All rights reserved.
  *
  * Not a Contribution. Apache license notifications and license are
  * retained for attribution purposes only.
@@ -93,6 +93,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -1032,6 +1033,15 @@ public class NetworkManagementService extends INetworkManagementService.Stub
         }
     }
 
+    private List<InterfaceAddress> excludeLinkLocal(List<InterfaceAddress> addresses) {
+        ArrayList<InterfaceAddress> filtered = new ArrayList<InterfaceAddress>(addresses.size());
+        for (InterfaceAddress ia : addresses) {
+            if (!ia.getAddress().isLinkLocalAddress())
+                filtered.add(ia);
+        }
+        return filtered;
+    }
+
     private void modifyNat(String action, String internalInterface, String externalInterface)
             throws SocketException {
         final Command cmd = new Command("nat", action, internalInterface, externalInterface);
@@ -1041,8 +1051,10 @@ public class NetworkManagementService extends INetworkManagementService.Stub
         if (internalNetworkInterface == null) {
             cmd.appendArg("0");
         } else {
-            Collection<InterfaceAddress> interfaceAddresses = internalNetworkInterface
-                    .getInterfaceAddresses();
+            // Don't touch link-local routes, as link-local addresses aren't routable,
+            // kernel creates link-local routes on all interfaces automatically
+            List<InterfaceAddress> interfaceAddresses = excludeLinkLocal(
+                    internalNetworkInterface.getInterfaceAddresses());
             cmd.appendArg(interfaceAddresses.size());
             for (InterfaceAddress ia : interfaceAddresses) {
                 InetAddress addr = NetworkUtils.getNetworkPart(
@@ -1940,7 +1952,9 @@ public class NetworkManagementService extends INetworkManagementService.Stub
         cmd.appendArg(iface);
         cmd.appendArg(metric);
 
-        if (route.isHostRoute()) {
+        // If route is not default then
+        // implicitly treat it as a host route
+        if (!route.isDefaultRoute()) {
             cmd.appendArg(route.getDestination().getAddress().getHostAddress());
         }
 

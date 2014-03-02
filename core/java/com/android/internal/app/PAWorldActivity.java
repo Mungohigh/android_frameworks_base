@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemProperties;
+import android.os.UserHandle;
 import android.text.method.AllCapsTransformationMethod;
 import android.text.method.TransformationMethod;
 import android.util.DisplayMetrics;
@@ -158,11 +159,11 @@ public class PAWorldActivity extends Activity {
             @Override
             public boolean onLongClick(View v) {
                 try {
-                    startActivity(new Intent(Intent.ACTION_MAIN)
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                        .addCategory("com.android.internal.category.PLATLOGO"));
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.setClassName("com.android.settings", "com.android.settings.BeanBag")
+                          .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getBaseContext().startActivityAsUser(intent,
+                            new UserHandle(UserHandle.USER_CURRENT));
                 } catch (ActivityNotFoundException ex) {
                     android.util.Log.e("PAWorldActivity", "Couldn't catch a break.");
                 }

@@ -889,7 +889,7 @@
         @hide -->
     <permission android:name="android.permission.PREVENT_POWER_KEY"
         android:permissionGroup="android.permission-group.HARDWARE_CONTROLS"
-        android:protectionLevel="signatureOrSystem"
+        android:protectionLevel="dangerous"
         android:label="@string/permlab_preventpower"
         android:description="@string/permdesc_preventpower" />
 
@@ -2526,6 +2526,13 @@
     <permission android:name="android.permission.ACCESS_NETWORK_CONDITIONS"
         android:label="@string/permlab_accessNetworkConditions"
         android:description="@string/permdesc_accessNetworkConditions"
+        android:protectionLevel="signature|system" />
+
+    <!-- Allows an application to record the screen.
+         @hide This is not a third-party API (intended for system apps). -->
+    <permission android:name="android.permission.RECORD_SCREEN"
+        android:label="@string/permlab_recordScreen"
+        android:description="@string/permdesc_recordScreen"
         android:protectionLevel="signature|system" />
 
     <!-- The system process is explicitly the only one allowed to launch the

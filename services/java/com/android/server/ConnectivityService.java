@@ -113,6 +113,7 @@ import com.android.internal.telephony.DctConstants;
 import com.android.internal.telephony.Phone;
 import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.util.IndentingPrintWriter;
+import com.android.server.AlarmManagerService;
 import com.android.internal.util.XmlUtils;
 import com.android.server.am.BatteryStatsService;
 import com.android.server.connectivity.DataConnectionStats;
@@ -122,6 +123,7 @@ import com.android.server.connectivity.Tethering;
 import com.android.server.connectivity.Vpn;
 import com.android.server.net.BaseNetworkObserver;
 import com.android.server.net.LockdownVpnTracker;
+import com.android.server.power.PowerManagerService;
 import com.google.android.collect.Lists;
 import com.google.android.collect.Sets;
 
@@ -669,6 +671,7 @@ public class ConnectivityService extends IConnectivityManager.Stub {
 
         // start network sampling ..
         Intent intent = new Intent(ACTION_PKT_CNT_SAMPLE_INTERVAL_ELAPSED, null);
+        intent.addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY_BEFORE_BOOT);
         mSampleIntervalElapsedIntent = PendingIntent.getBroadcast(mContext,
                 SAMPLE_INTERVAL_ELAPSED_REQUEST_CODE, intent, 0);
 
@@ -3924,6 +3927,23 @@ public class ConnectivityService extends IConnectivityManager.Stub {
             }
         }
         return ConnectivityManager.TYPE_NONE;
+    }
+
+    protected void updateBlockedUids(int uid, boolean isBlocked) {
+        try {
+            AlarmManagerService mAlarmMgrSvc =
+                (AlarmManagerService)ServiceManager.getService(Context.ALARM_SERVICE);
+            mAlarmMgrSvc.updateBlockedUids(uid,isBlocked);
+        } catch (NullPointerException e) {
+            Slog.w(TAG, "Could Not Update blocked Uids with alarmManager" + e);
+        }
+        try {
+            PowerManagerService mPowerMgrSvc =
+                (PowerManagerService)ServiceManager.getService(Context.POWER_SERVICE);
+            mPowerMgrSvc.updateBlockedUids(uid,isBlocked);
+        } catch (NullPointerException e) {
+            Slog.w(TAG, "Could Not Update blocked Uids with powerManager" + e);
+        }
     }
 
     /**
